@@ -29,7 +29,7 @@ export default function AboutPage() {
             <h1 className="text-4xl font-bold">BiliNote v1.8.1</h1>
           </div>
           <p className="text-muted-foreground mb-6 text-xl italic">
-            AI 视频笔记生成工具 让 AI 为你的视频做笔记
+            AI 影片筆記生成工具 讓 AI 為你的影片做筆記
           </p>
 
           <div className="mb-8 flex flex-wrap justify-center gap-2">
@@ -44,19 +44,19 @@ export default function AboutPage() {
             <Button asChild>
               <a href="https://www.bilinote.app" target="_blank">
                 <ExternalLink className="mr-2 h-4 w-4" />
-                体验 BiliNote
+                體驗 BiliNote
               </a>
             </Button>
             <Button variant="outline" asChild>
               <a href="https://github.com/JefferyHcool/BiliNote" target="_blank">
                 <Github className="mr-2 h-4 w-4" />
-                GitHub 仓库
+                GitHub 倉庫
               </a>
             </Button>
             <Button variant="outline" asChild>
               <a href="https://github.com/JefferyHcool/BiliNote/releases" target="_blank">
                 <Download className="mr-2 h-4 w-4" />
-                下载桌面版
+                下載桌面版
               </a>
             </Button>
           </div>
@@ -64,12 +64,12 @@ export default function AboutPage() {
 
         {/* Project Introduction */}
         <section className="mb-16">
-          <h2 className="mb-6 text-center text-3xl font-bold">✨ 项目简介</h2>
+          <h2 className="mb-6 text-center text-3xl font-bold">✨ 專案簡介</h2>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-lg">
-              BiliNote 是一个开源的 AI 视频笔记助手，支持通过哔哩哔哩、YouTube、抖音等视频链接，
+              BiliNote 是一个开源的 AI 视频笔记助手，支持通过嗶哩嗶哩、YouTube、抖音等影片連結，
               自动提取内容并生成结构清晰、重点明确的 Markdown
-              格式笔记。支持插入截图、原片跳转等功能。
+              格式笔记。支持插入截图、原片跳轉等功能。
             </p>
           </div>
         </section>
@@ -79,15 +79,15 @@ export default function AboutPage() {
           <h2 className="mb-8 text-center text-3xl font-bold">🔧 功能特性</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
-              { title: '多平台支持', desc: '支持 Bilibili、YouTube、本地视频、抖音等多个平台' },
-              { title: '笔记格式选择', desc: '支持返回多种笔记格式，满足不同需求' },
-              { title: '笔记风格选择', desc: '支持多种笔记风格，个性化定制' },
-              { title: '多模态视频理解', desc: '结合视觉和音频内容，全面理解视频' },
-              { title: '自定义 GPT 配置', desc: '支持自行配置 GPT 大模型' },
-              { title: '本地音频转写', desc: '支持 Fast-Whisper 等本地模型音频转写' },
-              { title: '结构化笔记', desc: '自动生成结构化 Markdown 笔记' },
-              { title: '智能截图', desc: '可选插入自动截取的关键画面' },
-              { title: '内容跳转', desc: '支持关联原视频的内容跳转链接' },
+              { title: '多平台支援', desc: '支援 Bilibili、YouTube、本地影片、抖音等多個平台' },
+              { title: '筆記格式選擇', desc: '支援返回多種筆記格式，滿足不同需求' },
+              { title: '筆記風格選擇', desc: '支援多種筆記風格，個性化定制' },
+              { title: '多模態影片理解', desc: '結合視覺和音訊內容，全面理解影片' },
+              { title: '自訂 GPT 設定', desc: '支持自行配置 GPT 大模型' },
+              { title: '本地音訊轉寫', desc: '支援 Fast-Whisper 等本地模型音訊轉寫' },
+              { title: '結構化筆記', desc: '自動生成結構化 Markdown 筆記' },
+              { title: '智慧截圖', desc: '可選插入自動截取的關鍵畫面' },
+              { title: '內容跳轉', desc: '支援關聯原影片的內容跳轉連結' },
             ].map((feature, index) => (
               <Card key={index} className="h-full">
                 <CardContent className="pt-2">
@@ -101,7 +101,7 @@ export default function AboutPage() {
 
         {/* Screenshots Section */}
         <section className="mb-16">
-          <h2 className="mb-8 text-center text-3xl font-bold">📸 截图预览</h2>
+          <h2 className="mb-8 text-center text-3xl font-bold">📸 截圖預覽</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {images.map(num => (
               <div key={num} className="overflow-hidden rounded-lg border shadow-sm">
@@ -119,15 +119,15 @@ export default function AboutPage() {
 
         {/* Quick Start Section */}
         <section className="mb-16">
-          <h2 className="mb-8 text-center text-3xl font-bold">🚀 快速开始</h2>
+          <h2 className="mb-8 text-center text-3xl font-bold">🚀 快速開始</h2>
           <Tabs defaultValue="manual" className="mx-auto max-w-3xl">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="manual">手动安装</TabsTrigger>
+              <TabsTrigger value="manual">手動安裝</TabsTrigger>
               <TabsTrigger value="docker">Docker 部署</TabsTrigger>
             </TabsList>
             <TabsContent value="manual" className="mt-6 space-y-6">
               <div>
-                <h3 className="mb-3 text-xl font-semibold">1. 克隆仓库</h3>
+                <h3 className="mb-3 text-xl font-semibold">1. 克隆倉庫</h3>
                 <div className="bg-muted rounded-md p-4 font-mono text-sm">
                   git clone https://github.com/JefferyHcool/BiliNote.git
                   <br />
@@ -137,7 +137,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div>
-                <h3 className="mb-3 text-xl font-semibold">2. 启动后端（FastAPI）</h3>
+                <h3 className="mb-3 text-xl font-semibold">2. 啟動後端（FastAPI）</h3>
                 <div className="bg-muted rounded-md p-4 font-mono text-sm">
                   cd backend
                   <br />
@@ -147,7 +147,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div>
-                <h3 className="mb-3 text-xl font-semibold">3. 启动前端（Vite + React）</h3>
+                <h3 className="mb-3 text-xl font-semibold">3. 啟動前端（Vite + React）</h3>
                 <div className="bg-muted rounded-md p-4 font-mono text-sm">
                   cd BiliNote_frontend
                   <br />
@@ -162,7 +162,7 @@ export default function AboutPage() {
             </TabsContent>
             <TabsContent value="docker" className="mt-6 space-y-6">
               <div>
-                <h3 className="mb-3 text-xl font-semibold">1. 克隆仓库</h3>
+                <h3 className="mb-3 text-xl font-semibold">1. 克隆倉庫</h3>
                 <div className="bg-muted rounded-md p-4 font-mono text-sm">
                   git clone https://github.com/JefferyHcool/BiliNote.git
                   <br />
@@ -172,7 +172,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div>
-                <h3 className="mb-3 text-xl font-semibold">2. 启动 Docker Compose</h3>
+                <h3 className="mb-3 text-xl font-semibold">2. 啟動 Docker Compose</h3>
                 <div className="bg-muted rounded-md p-4 font-mono text-sm">
                   docker compose up --build
                 </div>
@@ -185,7 +185,7 @@ export default function AboutPage() {
                 后端：http://localhost:${'{BACKEND_PORT}'}
                 <br />
                 <span className="text-muted-foreground text-sm">
-                  .env 文件中可自定义端口与环境配置
+                  .env 檔案中可自訂連接埠與環境設定
                 </span>
               </p>
             </TabsContent>
@@ -194,7 +194,7 @@ export default function AboutPage() {
 
         {/* Community Section */}
         <section className="mb-16">
-          <h2 className="mb-8 text-center text-3xl font-bold">联系和加入社区</h2>
+          <h2 className="mb-8 text-center text-3xl font-bold">聯繫和加入社群</h2>
           <div className="mx-auto max-w-3xl">
             <div className="flex flex-col items-center justify-center gap-8">
               <div className="text-center">
@@ -219,7 +219,7 @@ export default function AboutPage() {
 
         {/* Footer */}
         <footer className="border-t pt-8 text-center">
-          <p className="mb-4">💬 你的支持与反馈是我持续优化的动力！欢迎 PR、提 issue、Star ⭐️</p>
+          <p className="mb-4">💬 你的支持與回饋是我持續優化的動力！歡迎 PR、提 issue、Star ⭐️</p>
         </footer>
       </div>
     </ScrollArea>

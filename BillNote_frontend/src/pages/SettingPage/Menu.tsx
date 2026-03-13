@@ -12,7 +12,7 @@ const Menu = () => {
   const menuList: IMenuProps[] = [
     {
       id: 'model',
-      name: 'AI 模型设置',
+      name: 'AI 模型設定',
       icon: <BotMessageSquare />,
       path: '/settings/model',
     },
@@ -23,23 +23,23 @@ const Menu = () => {
     //   icon: <Captions />,
     //   path: '/settings/transcriber',
     // },
-    // //下载配置
+    // //下載設定
     {
       id: 'download',
-      name: '下载配置',
+      name: '下載設定',
       icon: <HardDriveDownload />,
       path: '/settings/download',
     },
     // //其他配置
     // {
     //   id: 'prompt',
-    //   name: '提示词设置',
+    //   name: '提示词設定',
     //   icon: <SquareChevronRight />,
     //   path: '/settings/prompt',
     // },
     {
       id: 'about',
-      name: '关于',
+      name: '關於',
       icon: <Info />,
       path: '/settings/about',
     },
@@ -53,8 +53,8 @@ const Menu = () => {
   return (
     <div className="flex h-full flex-col">
       <div className={'flex w-full flex-col gap-2'}>
-        <div className="text-2xl font-medium">设置</div>
-        <div className="text-sm font-light text-gray-800">全局配置与模型设置</div>
+        <div className="text-2xl font-medium">設定</div>
+        <div className="text-sm font-light text-gray-800">全域設定與模型設定</div>
       </div>
       <div className="mt-6 flex-1">
         {menuList &&
