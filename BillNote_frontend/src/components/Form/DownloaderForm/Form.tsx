@@ -1,4 +1,4 @@
-// 下载器 Cookie 设置表单（支持 YouTube 自动/手动切换）
+// 下載器 Cookie 設定表單（支援 YouTube 自動/手動切換）
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -44,7 +44,7 @@ const SUPPORTED_BROWSERS = [
 ] as const
 
 const CookieSchema = z.object({
-  cookie: z.string().min(10, '请填写有效 Cookie'),
+  cookie: z.string().min(10, '請填寫有效 Cookie'),
 })
 
 // YouTube 专用表单
@@ -64,7 +64,7 @@ const YouTubeForm = () => {
         setBrowser(res?.browser || 'chrome')
         setCookie(res?.cookie || '')
       } catch (e) {
-        toast.error('加载配置失败: ' + e)
+        toast.error('載入設定失敗：' + e)
       } finally {
         setLoading(false)
       }
@@ -73,10 +73,10 @@ const YouTubeForm = () => {
   }, [])
 
   const onSubmit = async () => {
-    // 手动模式下校验 cookie
+    // 手動模式下校验 cookie
     if (!isAutoMode) {
       if (!cookie || cookie.trim().length < 10) {
-        setCookieError('请填写有效 Cookie（至少 10 个字符）')
+        setCookieError('請填寫有效 Cookie（至少 10 個字元）')
         return
       }
     }
@@ -89,29 +89,29 @@ const YouTubeForm = () => {
         browser: isAutoMode ? browser : undefined,
         cookie: isAutoMode ? undefined : cookie,
       })
-      toast.success('保存成功')
+      toast.success('儲存成功')
     } catch (e) {
-      toast.error('保存失败')
+      toast.error('儲存失敗')
     }
   }
 
-  if (loading) return <div className="p-4">加载中...</div>
+  if (loading) return <div className="p-4">載入中...</div>
 
   return (
     <div className="max-w-xl p-4">
       <div className="flex flex-col gap-5">
-        <div className="text-lg font-bold">设置 YouTube 下载器 Cookie</div>
+        <div className="text-lg font-bold">設定 YouTube 下載器 Cookie</div>
 
         {/* Auto/Manual Switch */}
         <div className="flex items-center justify-between rounded-lg border p-3">
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium">
-              {isAutoMode ? '🔄 自动模式' : '✋ 手动模式'}
+              {isAutoMode ? '🔄 自動模式' : '✋ 手動模式'}
             </span>
             <span className="text-xs text-muted-foreground">
               {isAutoMode
-                ? '自动从本机浏览器读取 Cookie（仅限本地运行）'
-                : '手动粘贴 Cookie 字符串（适用于 Docker 部署）'}
+                ? '自動從本機瀏覽器讀取 Cookie（僅限本地運行）'
+                : '手動貼上 Cookie 字串（適用於 Docker 部署）'}
             </span>
           </div>
           <Switch checked={isAutoMode} onCheckedChange={setIsAutoMode} />
@@ -120,10 +120,10 @@ const YouTubeForm = () => {
         {/* Auto Mode: Browser Selector */}
         {isAutoMode && (
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">浏览器</label>
+            <label className="text-sm font-medium">瀏覽器</label>
             <Select value={browser} onValueChange={setBrowser}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="选择浏览器" />
+                <SelectValue placeholder="選擇瀏覽器" />
               </SelectTrigger>
               <SelectContent>
                 {SUPPORTED_BROWSERS.map(b => (
@@ -134,7 +134,7 @@ const YouTubeForm = () => {
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              请确保所选浏览器已登录 YouTube 账号
+              請確保所選瀏覽器已登入 YouTube 帳號
             </p>
           </div>
         )}
@@ -149,7 +149,7 @@ const YouTubeForm = () => {
                 setCookie(e.target.value)
                 setCookieError('')
               }}
-              placeholder="输入 Cookie"
+              placeholder="輸入 Cookie"
             />
             {cookieError && (
               <p className="text-sm text-destructive">{cookieError}</p>
@@ -157,7 +157,7 @@ const YouTubeForm = () => {
           </div>
         )}
 
-        <Button onClick={onSubmit}>保存</Button>
+        <Button onClick={onSubmit}>儲存</Button>
       </div>
     </div>
   )
@@ -181,7 +181,7 @@ const GenericCookieForm = () => {
         const cookie = res?.cookie || ''
         form.reset({ cookie })
       } catch (e) {
-        toast.error('加载 Cookie 失败: ' + e)
+        toast.error('載入 Cookie 失敗：' + e)
         form.reset({ cookie: '' })
       } finally {
         setLoading(false)
@@ -197,20 +197,20 @@ const GenericCookieForm = () => {
         platform: id!,
         cookie: String(values.cookie),
       })
-      toast.success('保存成功')
+      toast.success('儲存成功')
     } catch (e) {
-      toast.error('保存失败')
+      toast.error('儲存失敗')
     }
   }
 
-  if (loading) return <div className="p-4">加载中...</div>
+  if (loading) return <div className="p-4">載入中...</div>
 
   return (
     <div className="max-w-xl p-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="text-lg font-bold">
-            设置{videoPlatforms.find(item => item.value === id)?.label}下载器 Cookie
+            設定{videoPlatforms.find(item => item.value === id)?.label}下載器 Cookie
           </div>
 
           <FormField
@@ -220,21 +220,21 @@ const GenericCookieForm = () => {
               <FormItem className="flex flex-col gap-2">
                 <FormLabel>Cookie</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="输入 Cookie" />
+                  <Input {...field} placeholder="輸入 Cookie" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button type="submit">保存</Button>
+          <Button type="submit">儲存</Button>
         </form>
       </Form>
     </div>
   )
 }
 
-// 主表单组件：根据平台自动选择
+// 主表單元件：根據平台自動選擇
 const DownloaderForm = () => {
   const { id } = useParams()
 

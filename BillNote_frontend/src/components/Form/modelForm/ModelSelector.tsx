@@ -41,9 +41,9 @@ export function ModelSelector({ providerId }: ModelSelectorProps) {
     try {
       setSubmitting(true)
       await addNewModel(providerId, selectedModel)
-      toast.success('保存模型成功 🎉')
+      toast.success('儲存模型成功 🎉')
     } catch (error) {
-      toast.error('保存失败')
+      toast.error('儲存失敗')
     } finally {
       setSubmitting(false)
     }
@@ -52,25 +52,25 @@ export function ModelSelector({ providerId }: ModelSelectorProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 font-bold">
-        <span>选择模型</span>
+        <span>選擇模型</span>
         <Button
           variant="ghost"
           type="button"
           onClick={() => loadModels(providerId)}
           disabled={loading}
         >
-          {loading ? '加载中...' : '刷新模型'}
+          {loading ? '載入中...' : '重新整理模型'}
         </Button>
       </div>
 
       <Select value={selectedModel} onValueChange={setSelectedModel}>
         <SelectTrigger className="w-[300px]">
-          <SelectValue placeholder="请选择模型" />
+          <SelectValue placeholder="請選擇模型" />
         </SelectTrigger>
         <SelectContent>
           <div className="p-2">
             <Input
-              placeholder="搜索模型..."
+              placeholder="搜尋模型..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="h-8"
@@ -85,7 +85,7 @@ export function ModelSelector({ providerId }: ModelSelectorProps) {
       </Select>
 
       <Button onClick={handleSubmit} disabled={submitting || !selectedModel}>
-        {submitting ? '保存中...' : '保存模型'}
+        {submitting ? '儲存模型中...' : '儲存模型'}
       </Button>
     </div>
   )

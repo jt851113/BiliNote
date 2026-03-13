@@ -13,7 +13,7 @@ const Provider = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-sm font-light">下载器配置</div>
+      <div className="text-sm font-light">下載器設定</div>
       <div>
         {videoPlatforms &&
           videoPlatforms.map((provider, index) => {

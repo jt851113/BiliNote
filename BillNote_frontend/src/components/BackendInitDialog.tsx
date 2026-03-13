@@ -12,10 +12,10 @@ interface Props {
         <DialogHeader>
           <DialogTitle className="flex items-center justify-center gap-2">
             <Loader2 className="animate-spin w-5 h-5" />
-            后端正在初始化中…
+            後端正在初始化中…
           </DialogTitle>
         </DialogHeader>
-        <p className="text-muted-foreground mt-2">请稍候，系统正在启动后端服务,出现报错属于正常现象</p>
+        <p className="text-muted-foreground mt-2">請稍候，系統正在啟動後端服務，出現報錯屬於正常現象</p>
       </DialogContent>
     </Dialog>
   )

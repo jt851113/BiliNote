@@ -20,10 +20,10 @@ const Provider = () => {
           }}
           className="w-full"
         >
-          添加模型供应商
+          新增模型供應商
         </Button>
       </div>
-      <div className="text-sm font-light">模型供应商列表</div>
+      <div className="text-sm font-light">模型供應商列表</div>
       <div>
         {providers &&
           providers.map((provider, index) => {

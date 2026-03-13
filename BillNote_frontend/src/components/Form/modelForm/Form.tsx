@@ -32,9 +32,9 @@ import { useModelStore } from '@/store/modelStore'
 
 // ✅ Provider表单schema
 const ProviderSchema = z.object({
-  name: z.string().min(2, '名称不能少于 2 个字符'),
+  name: z.string().min(2, '名稱不能少於 2 個字元'),
   apiKey: z.string().optional(),
-  baseUrl: z.string().url('必须是合法 URL'),
+  baseUrl: z.string().url('必須是合法 URL'),
   type: z.string(),
 })
 
@@ -42,7 +42,7 @@ type ProviderFormValues = z.infer<typeof ProviderSchema>
 
 // ✅ Model表单schema
 const ModelSchema = z.object({
-  modelName: z.string().min(1, '请选择或填写模型名称'),
+  modelName: z.string().min(1, '請選擇或填寫模型名稱'),
 })
 
 type ModelFormValues = z.infer<typeof ModelSchema>
@@ -67,7 +67,7 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
   const [testing, setTesting] = useState(false)
   const [isBuiltIn, setIsBuiltIn] = useState(false)
   const loadModelsById= useModelStore(state => state.loadModelsById)
-  const [modelOptions, setModelOptions] = useState<IModel[]>([]) // ⚡新增，保存模型列表
+  const [modelOptions, setModelOptions] = useState<IModel[]>([]) // ⚡新增，儲存模型列表
   const [models, setModels]= useState([])
   const [modelLoading, setModelLoading] = useState(false)
   const randomColor = ()=>{
@@ -125,28 +125,28 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
     load()
   }, [id])
   const handelDelete=async (modelId)=>{
-    if (!window.confirm('确定要删除这个模型吗？')) return
+    if (!window.confirm('確定要刪除這個模型嗎？')) return
 
     try {
       const res = await deleteModelById(modelId)
-      console.log('🔧 删除结果:', res)
+      console.log('🔧 刪除结果:', res)
 
-      toast.success('删除成功')
+      toast.success('刪除成功')
 
     } catch (e) {
-      toast.error('删除异常')
+      toast.error('刪除異常')
     }
   }
-  // 测试连通性
+  // 測試連通性
   const handleTest = async () => {
     const values = providerForm.getValues()
     if (!values.apiKey || !values.baseUrl) {
-      toast.error('请填写 API Key 和 Base URL')
+      toast.error('請填寫 API Key 和 Base URL')
       return
     }
     try {
       if (!id){
-        toast.error('请先保存供应商信息')
+        toast.error('請先儲存供應商資訊')
         return
       }
       setTesting(true)
@@ -154,12 +154,12 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
              id
           })
 
-        toast.success('测试连通性成功 🎉')
+        toast.success('測試連通性成功 🎉')
 
     } catch (error) {
 
-      toast.error(`连接失败: ${data.data.msg || '未知错误'}`)
-      // toast.error('测试连通性异常')
+      toast.error(`連線失敗: ${data.data.msg || '未知错误'}`)
+      // toast.error('測試連通性异常')
     } finally {
       setTesting(false)
     }
@@ -169,7 +169,7 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
   const handleModelLoad = async () => {
     const values = providerForm.getValues()
     if (!values.apiKey || !values.baseUrl) {
-      toast.error('请先填写 API Key 和 Base URL')
+      toast.error('請先填寫 API Key 和 Base URL')
       return
     }
     try {
@@ -178,38 +178,38 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
       if (res.data.code === 0 && res.data.data.models.data.length > 0) {
         setModelOptions(res.data.data.models.data)
         console.log('🔧 模型列表:', res.data.data)
-        toast.success('模型列表加载成功 🎉')
+        toast.success('模型列表載入成功 🎉')
       } else {
-        toast.error('未获取到模型列表')
+        toast.error('未取得模型列表')
       }
     } catch (error) {
-      toast.error('加载模型列表失败')
+      toast.error('載入模型列表失敗')
     } finally {
       setModelLoading(false) // ✅ 结束 loading
     }
   }
 
-  // 保存Provider信息
+  // 儲存Provider信息
   const onProviderSubmit = async (values: ProviderFormValues) => {
     if (isEditMode) {
       await updateProvider({ ...values, id: id! })
-      toast.success('更新供应商成功')
+      toast.success('更新供應商成功')
     } else {
        id = await addNewProvider({ ...values })
 
-      toast.success('新增供应商成功')
+      toast.success('新增供應商成功')
     }
     // 刷新页面
 
   }
 
-  // 保存Model信息
+  // 儲存Model信息
   const onModelSubmit = async (values: ModelFormValues) => {
-    toast.success(`保存模型: ${values.modelName}`)
+    toast.success(`儲存模型: ${values.modelName}`)
     await loadModelsById(id!)
   }
 
-  if (loading) return <div className="p-4">加载中...</div>
+  if (loading) return <div className="p-4">載入中...</div>
 
   return (
     <div className="flex flex-col gap-8 p-4">
@@ -220,11 +220,11 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
           className="flex max-w-xl flex-col gap-4"
         >
           <div className="text-lg font-bold">
-            {isEditMode ? '编辑模型供应商' : '新增模型供应商'}
+            {isEditMode ? '編輯模型供應商' : '新增模型供應商'}
           </div>
           {!isBuiltIn && (
             <div className="text-sm text-red-500 italic">
-              自定义模型供应商需要确保兼容 OpenAI SDK
+              自訂模型供應商需要確保相容 OpenAI SDK
             </div>
           )}
           <FormField
@@ -232,7 +232,7 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
             name="name"
             render={({ field }) => (
               <FormItem className="flex items-center gap-4">
-                <FormLabel className="w-24 text-right">名称</FormLabel>
+                <FormLabel className="w-24 text-right">名稱</FormLabel>
                 <FormControl>
                   <Input {...field} disabled={isBuiltIn} className="flex-1" />
                 </FormControl>
@@ -258,12 +258,12 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
             name="baseUrl"
             render={({ field }) => (
               <FormItem className="flex items-center gap-4">
-                <FormLabel className="w-24 text-right">API地址</FormLabel>
+                <FormLabel className="w-24 text-right">API 位址</FormLabel>
                 <FormControl>
                   <Input {...field} className="flex-1" />
                 </FormControl>
                 <Button type="button" onClick={handleTest} variant="ghost" disabled={testing}>
-                  {testing ? '测试中...' : '测试连通性'}
+                  {testing ? '測試中...' : '測試連通性'}
                 </Button>
                 <FormMessage />
               </FormItem>
@@ -274,7 +274,7 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
             name="type"
             render={({ field }) => (
               <FormItem className="flex items-center gap-4">
-                <FormLabel className="w-24 text-right">类型</FormLabel>
+                <FormLabel className="w-24 text-right">類型</FormLabel>
                 <FormControl>
                   <Input {...field} disabled className="flex-1" />
                 </FormControl>
@@ -284,7 +284,7 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
           />
           <div className="pt-2">
             <Button type="submit" disabled={!providerForm.formState.isDirty}>
-              {isEditMode ? '保存修改' : '保存创建'}
+              {isEditMode ? '儲存修改' : '儲存建立'}
             </Button>
           </div>
         </form>
@@ -296,7 +296,7 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
           <span className="font-bold">模型列表</span>
           <div className={'flex flex-col gap-2 rounded bg-[#FEF0F0] p-2.5'}>
             <h2 className={'font-bold'}>注意!</h2>
-            <span>请确保已经保存供应商信息,以及通过测试连通性.</span>
+            <span>請確保已經儲存供應商資訊，以及通過測試連通性。</span>
           </div>
           <ModelSelector providerId={id!} />
 
@@ -307,7 +307,7 @@ const ProviderForm = ({ isCreate = false }: { isCreate?: boolean }) => {
           {/*</datalist>*/}
         </div>
         <div className="flex flex-col gap-2">
-          <span className="font-bold">已启用模型</span>
+          <span className="font-bold">已啟用模型</span>
           <div className={'flex flex-wrap gap-2 rounded  p-2.5'}>
             {
               models && models.map(model => {
