@@ -12,11 +12,11 @@ const History = () => {
   return (
     <>
       <div className={'flex h-full w-full flex-col gap-4 px-2.5 py-1.5'}>
-        {/*生成历史    */}
+        {/*生成歷史    */}
         <div className="my-4 flex h-[40px] items-center justify-between">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-neutral-500" />
-            <h2 className="text-base font-medium text-neutral-900">生成历史</h2>
+            <h2 className="text-base font-medium text-neutral-900">生成歷史</h2>
           </div>
 
           {!isBatchMode ? (

@@ -61,7 +61,7 @@ export default function MarkmapEditor({
     }
   }
   
-  // 导出HTML思维导图
+  // 导出HTML思維導圖
   const exportHtml = () => {
     try {
       const { root } = transformer.transform(value)
@@ -73,7 +73,7 @@ export default function MarkmapEditor({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title || 'BiliNote思维导图'}</title>
+  <title>${title || 'BiliNote 思維導圖'}</title>
   <style>
   body {
     margin: 0;
@@ -113,11 +113,11 @@ export default function MarkmapEditor({
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('导出HTML失败:', error);
+      console.error('导出HTML失敗:', error);
     }
   };
 
-  // 导出SVG思维导图（矢量图）
+  // 导出SVG思維導圖（矢量图）
   const exportSvg = async () => {
     try {
       if (!svgRef.current || !mmRef.current) return;
@@ -125,7 +125,7 @@ export default function MarkmapEditor({
       const svgEl = svgRef.current;
       const mm = mmRef.current;
 
-      // 先调用fit()确保显示完整的思维导图内容
+      // 先调用fit()确保显示完整的思維導圖内容
       await mm.fit();
       // 等待渲染完成
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -144,19 +144,19 @@ export default function MarkmapEditor({
         const viewBoxWidth = bbox.width + padding * 2;
         const viewBoxHeight = bbox.height + padding * 2;
 
-        // 设置viewBox以确保SVG可以无限缩放
+        // 設定viewBox以确保SVG可以无限缩放
         clonedSvg.setAttribute('viewBox', `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`);
         // 移除固定尺寸，让SVG根据viewBox自适应
         clonedSvg.removeAttribute('width');
         clonedSvg.removeAttribute('height');
-        // 设置默认尺寸为100%，可以在任何容器中自适应
+        // 設定默认尺寸为100%，可以在任何容器中自适应
         clonedSvg.setAttribute('width', '100%');
         clonedSvg.setAttribute('height', '100%');
         // 保持宽高比
         clonedSvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
       }
 
-      // 设置SVG的背景为白色
+      // 設定SVG的背景为白色
       const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
       style.textContent = 'svg { background-color: white; }';
       clonedSvg.insertBefore(style, clonedSvg.firstChild);
@@ -195,11 +195,11 @@ export default function MarkmapEditor({
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('导出SVG失败:', error);
+      console.error('导出SVG失敗:', error);
     }
   };
 
-  // 导出XMind格式思维导图
+  // 匯出 XMind 格式思維導圖
   const exportXMind = async () => {
     try {
       const { root } = transformer.transform(value);
@@ -263,7 +263,7 @@ export default function MarkmapEditor({
       const content = [{
         id: sheetId,
         class: 'sheet',
-        title: stripHtml(title) || '思维导图',
+        title: stripHtml(title) || '思維導圖',
         rootTopic: rootTopic,
         topicPositioning: 'fixed'
       }];
@@ -302,11 +302,11 @@ export default function MarkmapEditor({
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('导出XMind失败:', error);
+      console.error('导出XMind失敗:', error);
     }
   };
 
-  // 导出PNG思维导图
+  // 导出PNG思維導圖
   const exportPng = async () => {
     try {
       if (!svgRef.current || !mmRef.current) return;
@@ -314,7 +314,7 @@ export default function MarkmapEditor({
       const svgEl = svgRef.current;
       const mm = mmRef.current;
 
-      // 先调用fit()确保显示完整的思维导图内容
+      // 先调用fit()确保显示完整的思維導圖内容
       await mm.fit();
       // 等待渲染完成
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -323,13 +323,13 @@ export default function MarkmapEditor({
       const svgWidth = svgEl.width.baseVal.value || svgEl.clientWidth || 800;
       const svgHeight = svgEl.height.baseVal.value || svgEl.clientHeight || 600;
       
-      // 设置足够大的缩放比例以确保高清输出
+      // 設定足够大的缩放比例以确保高清输出
       const scale = 3;
       
       // 克隆SVG以避免修改原始SVG
       const clonedSvg = svgEl.cloneNode(true) as SVGSVGElement;
       
-      // 设置SVG的背景为白色
+      // 設定SVG的背景为白色
       const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
       style.textContent = 'svg { background-color: white; }';
       clonedSvg.insertBefore(style, clonedSvg.firstChild);
@@ -349,13 +349,13 @@ export default function MarkmapEditor({
       canvas.width = svgWidth * scale;
       canvas.height = svgHeight * scale;
       
-      // 获取上下文并设置白色背景
+      // 获取上下文并設定白色背景
       const ctx = canvas.getContext('2d');
       if (!ctx) {
         throw new Error('无法获取Canvas上下文');
       }
       
-      // 设置白色背景
+      // 設定白色背景
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
@@ -391,20 +391,20 @@ export default function MarkmapEditor({
             }
           }, 'image/png');
         } catch (err) {
-          console.error('Canvas处理失败:', err);
+          console.error('Canvas处理失敗:', err);
         }
       };
       
-      // 设置图片加载错误处理
+      // 設定图片加载错误处理
       img.onerror = (error) => {
-        console.error('导出PNG失败（图片加载错误）:', error);
+        console.error('导出PNG失敗（图片加载错误）:', error);
       };
       
       // 开始加载SVG图像 (使用Data URI而不是Blob URL)
       img.src = dataUri;
       
     } catch (error) {
-      console.error('导出PNG失败:', error);
+      console.error('导出PNG失敗:', error);
     }
   };
 
@@ -444,28 +444,28 @@ export default function MarkmapEditor({
         <button
           onClick={exportXMind}
           className="rounded p-1 hover:bg-gray-200"
-          title="导出XMind格式"
+          title="匯出 XMind 格式"
         >
           🧠
         </button>
         <button
           onClick={exportSvg}
           className="rounded p-1 hover:bg-gray-200"
-          title="导出SVG矢量图（可无限放大）"
+          title="匯出 SVG 向量圖（可無限放大）"
         >
           📐
         </button>
         <button
           onClick={exportPng}
           className="rounded p-1 hover:bg-gray-200"
-          title="导出PNG图片"
+          title="匯出 PNG 圖片"
         >
           🖼️
         </button>
         <button
           onClick={exportHtml}
           className="rounded p-1 hover:bg-gray-200"
-          title="导出HTML（可交互）"
+          title="匯出 HTML（可互動）"
         >
           💾
         </button>
@@ -487,7 +487,7 @@ export default function MarkmapEditor({
       {/* 如果需要编辑区，就自己加一个 <textarea> 并把 handleChange 绑上 */}
       {/* <textarea value={value} onChange={handleChange} className="mb-2 p-2 border rounded" /> */}
 
-      {/* 思维导图区 */}
+      {/* 思維導圖区 */}
       <svg ref={svgRef} className="w-full flex-1" style={{ height, overflow: 'auto' }} />
 
       {/* 如果你还想保留 markmap-toolbar */}

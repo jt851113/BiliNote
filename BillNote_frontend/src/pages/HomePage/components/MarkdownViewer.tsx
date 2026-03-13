@@ -38,11 +38,11 @@ interface MarkdownViewerProps {
 }
 
 const steps = [
-  { label: '解析链接', key: 'PARSING' },
-  { label: '下载音频', key: 'DOWNLOADING' },
-  { label: '转写文字', key: 'TRANSCRIBING' },
-  { label: '总结内容', key: 'SUMMARIZING' },
-  { label: '保存完成', key: 'SUCCESS' },
+  { label: '解析連結', key: 'PARSING' },
+  { label: '下載音訊', key: 'DOWNLOADING' },
+  { label: '轉寫文字', key: 'TRANSCRIBING' },
+  { label: '總結內容', key: 'SUMMARIZING' },
+  { label: '儲存完成', key: 'SUCCESS' },
 ]
 
 const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
@@ -98,10 +98,10 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
     try {
       await navigator.clipboard.writeText(selectedContent)
       setCopied(true)
-      toast.success('已复制到剪贴板')
+      toast.success('已複製到剪貼簿')
       setTimeout(() => setCopied(false), 2000)
     } catch (e) {
-      toast.error('复制失败')
+      toast.error('複製失敗')
     }
   }
   const alertButton = {
@@ -112,7 +112,7 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
   }
   const exportButton = {
     id: 'export',
-    title: '导出思维导图',
+    title: '匯出思維導圖',
     content: '⤓',
     onClick: () => {
       const svgEl = svgRef.current
@@ -139,7 +139,7 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
     // 檢查瀏覽器是否支持 File System Access API
     if ('showSaveFilePicker' in window) {
       try {
-        // 使用現代 API 讓用戶選擇保存位置
+        // 使用現代 API 讓用戶選擇儲存位置
         const handle = await (window as any).showSaveFilePicker({
           suggestedName: `${name}.md`,
           types: [{
@@ -150,12 +150,12 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
         const writable = await handle.createWritable()
         await writable.write(blob)
         await writable.close()
-        toast.success('檔案已保存')
+        toast.success('檔案已儲存')
       } catch (err: any) {
         // 用戶取消操作不顯示錯誤
         if (err.name !== 'AbortError') {
-          console.error('保存失敗:', err)
-          toast.error('保存失敗，請重試')
+          console.error('儲存失敗:', err)
+          toast.error('儲存失敗，請重試')
         }
       }
     } else {
@@ -176,13 +176,13 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
         <StepBar steps={steps} currentStep={taskStatus} />
         <Loading className="h-5 w-5" />
         <div className="text-center text-sm">
-          <p className="text-lg font-bold">正在生成笔记，请稍候…</p>
+          <p className="text-lg font-bold">正在生成筆記，請稍候…</p>
           {summarizeProgress && (
             <p className="mt-2 text-xs font-medium text-primary">
               正在摘要：{summarizeProgress.current}/{summarizeProgress.total} 段（{summarizeProgress.percentage}%）
             </p>
           )}
-          <p className="mt-2 text-xs text-neutral-500">这可能需要几秒钟时间，取决于视频长度</p>
+          <p className="mt-2 text-xs text-neutral-500">這可能需要幾秒鐘時間，取決於影片長度</p>
         </div>
       </div>
     )
@@ -193,8 +193,8 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
       <div className="flex h-screen w-full flex-col items-center justify-center space-y-3 text-neutral-500">
         <Idle />
         <div className="text-center">
-          <p className="text-lg font-bold">输入视频链接并点击“生成笔记”</p>
-          <p className="mt-2 text-xs text-neutral-500">支持哔哩哔哩、YouTube 、抖音等视频平台</p>
+          <p className="text-lg font-bold">输入影片連結并点击“生成筆記”</p>
+          <p className="mt-2 text-xs text-neutral-500">支援嗶哩嗶哩、YouTube、抖音等影片平台</p>
         </div>
       </div>
     )
@@ -205,11 +205,11 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4 space-y-3">
         <Error />
         <div className="text-center">
-          <p className="text-lg font-bold text-red-500">笔记生成失败</p>
-          <p className="mt-2 mb-2 text-xs text-red-400">请检查后台或稍后再试</p>
+          <p className="text-lg font-bold text-red-500">筆記生成失敗</p>
+          <p className="mt-2 mb-2 text-xs text-red-400">請檢查後台或稍後再試</p>
 
           <Button onClick={() => retryTask(currentTask.id)} size="lg">
-            重试
+            重試
           </Button>
         </div>
       </div>
@@ -242,7 +242,7 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
               value={selectedContent}
               onChange={() => { }}
               height="100%" // 根据需求可以设定百分比或固定高度
-              title={currentTask?.audioMeta?.title || '思维导图'}
+              title={currentTask?.audioMeta?.title || '思維導圖'}
             />
           </div>
         </div>
@@ -424,12 +424,12 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
                                 <button
                                   onClick={() => {
                                     navigator.clipboard.writeText(codeContent)
-                                    toast.success('代码已复制')
+                                    toast.success('程式碼已複製')
                                   }}
                                   className="bg-background/80 hover:bg-background flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors"
                                 >
                                   <Copy className="h-3.5 w-3.5" />
-                                  复制
+                                  複製
                                 </button>
                               </div>
                               <SyntaxHighlighter
@@ -513,8 +513,8 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
                 <div className="bg-primary-light mb-4 flex h-16 w-16 items-center justify-center rounded-full">
                   <ArrowRight className="text-primary h-8 w-8" />
                 </div>
-                <p className="mb-2 text-neutral-600">输入视频链接并点击"生成笔记"按钮</p>
-                <p className="text-xs text-neutral-500">支持哔哩哔哩、YouTube等视频网站</p>
+                <p className="mb-2 text-neutral-600">輸入影片連結並點擊「生成筆記」按钮</p>
+                <p className="text-xs text-neutral-500">支援嗶哩嗶哩、YouTube 等影片網站</p>
               </div>
             </div>
           )}

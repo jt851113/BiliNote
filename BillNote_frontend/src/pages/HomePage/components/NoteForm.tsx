@@ -44,13 +44,13 @@ import { useNavigate } from 'react-router-dom'
 const formSchema = z
   .object({
     video_url: z.string().optional(),
-    platform: z.string().nonempty('请选择平台'),
+    platform: z.string().nonempty('請選擇平台'),
     quality: z.enum(['fast', 'medium', 'slow']),
     screenshot: z.boolean().optional(),
     link: z.boolean().optional(),
-    model_name: z.string().nonempty('请选择模型'),
+    model_name: z.string().nonempty('請選擇模型'),
     format: z.array(z.string()).default([]),
-    style: z.string().nonempty('请选择笔记生成风格'),
+    style: z.string().nonempty('請選擇筆記生成風格'),
     extras: z.string().optional(),
     video_understanding: z.boolean().optional(),
     video_interval: z.coerce.number().min(1).max(30).default(4).optional(),
@@ -62,12 +62,12 @@ const formSchema = z
   .superRefine(({ video_url, platform }, ctx) => {
     if (platform === 'local') {
       if (!video_url) {
-        ctx.addIssue({ code: 'custom', message: '本地视频路径不能为空', path: ['video_url'] })
+        ctx.addIssue({ code: 'custom', message: '本地影片路徑不能為空', path: ['video_url'] })
       }
     }
     else {
       if (!video_url) {
-        ctx.addIssue({ code: 'custom', message: '视频链接不能为空', path: ['video_url'] })
+        ctx.addIssue({ code: 'custom', message: '影片連結不能為空', path: ['video_url'] })
       }
       else {
         try {
@@ -76,7 +76,7 @@ const formSchema = z
             throw new Error()
         }
         catch {
-          ctx.addIssue({ code: 'custom', message: '请输入正确的视频链接', path: ['video_url'] })
+          ctx.addIssue({ code: 'custom', message: '請輸入正確的影片連結', path: ['video_url'] })
         }
       }
     }
@@ -209,8 +209,8 @@ const NoteForm = () => {
       cb(data.url)
       setUploadSuccess(true)
     } catch (err) {
-      console.error('上传失败:', err)
-      // message.error('上传失败，请重试')
+      console.error('上傳失敗:', err)
+      // message.error('上傳失敗，請重試')
     } finally {
       setIsUploading(false)
     }
@@ -239,7 +239,7 @@ const NoteForm = () => {
     addPendingTask(data.task_id, values.platform, payload)
   }
   const onInvalid = (errors: FieldErrors<NoteFormValues>) => {
-    console.warn('表单校验失败：', errors)
+    console.warn('表单校验失敗：', errors)
     // message.error('请完善所有必填项后再提交')
   }
   const handleCreateNew = () => {
@@ -253,7 +253,7 @@ const NoteForm = () => {
     setCurrentTask(null)
   }
   const FormButton = () => {
-    const label = generating ? '正在生成…' : editing ? '重新生成' : '生成笔记'
+    const label = generating ? '正在生成…' : editing ? '重新生成' : '生成筆記'
 
     return (
       <div className="flex gap-2">
@@ -269,7 +269,7 @@ const NoteForm = () => {
         {editing && (
           <Button type="button" variant="outline" className="w-1/3" onClick={handleCreateNew}>
             <Plus className="mr-2 h-4 w-4" />
-            新建笔记
+            新建筆記
           </Button>
         )}
       </div>
@@ -284,8 +284,8 @@ const NoteForm = () => {
           {/* 顶部按钮 */}
           <FormButton></FormButton>
 
-          {/* 视频链接 & 平台 */}
-          <SectionHeader title="视频链接" tip="支持 B 站、YouTube 等平台" />
+          {/* 影片連結 & 平台 */}
+          <SectionHeader title="影片連結" tip="支援 B 站、YouTube 等平台" />
           <div className="flex gap-2">
             {/* 平台选择 */}
 
@@ -328,10 +328,10 @@ const NoteForm = () => {
                 <FormItem className="flex-1">
                   {platform === 'local' ? (
                     <>
-                      <Input disabled={!!editing} placeholder="请输入本地视频路径" {...field} />
+                      <Input disabled={!!editing} placeholder="請輸入本地影片路徑" {...field} />
                     </>
                   ) : (
-                    <Input disabled={!!editing} placeholder="请输入视频网站链接" {...field} />
+                    <Input disabled={!!editing} placeholder="請輸入影片網站連結" {...field} />
                   )}
                   <FormMessage style={{ display: 'none' }} />
                 </FormItem>
@@ -369,13 +369,13 @@ const NoteForm = () => {
                       }}
                     >
                       {isUploading ? (
-                        <p className="text-center text-sm text-blue-500">上传中，请稍候…</p>
+                        <p className="text-center text-sm text-blue-500">上傳中，請稍候…</p>
                       ) : uploadSuccess ? (
-                        <p className="text-center text-sm text-green-500">上传成功！</p>
+                        <p className="text-center text-sm text-green-500">上傳成功！</p>
                       ) : (
                         <p className="text-center text-sm text-gray-500">
-                          拖拽文件到这里上传 <br />
-                          <span className="text-xs text-gray-400">或点击选择文件</span>
+                          拖曳檔案到這裡上傳 <br />
+                          <span className="text-xs text-gray-400">或點擊選擇檔案</span>
                         </p>
                       )}
                     </div>
@@ -386,7 +386,7 @@ const NoteForm = () => {
             )}
           />
           <div className="grid grid-cols-2 gap-2">
-            {/* 模型选择 */}
+            {/* 模型選擇 */}
             {
 
               modelList.length > 0 ? (<FormField
@@ -395,7 +395,7 @@ const NoteForm = () => {
                 name="model_name"
                 render={({ field }) => (
                   <FormItem>
-                    <SectionHeader title="模型选择" tip="不同模型效果不同，建议自行测试" />
+                    <SectionHeader title="模型選擇" tip="不同模型效果不同，建議自行測試" />
                     <Select
                       onOpenChange={() => {
                         loadEnabledModels()
@@ -422,23 +422,23 @@ const NoteForm = () => {
                 )}
               />) : (
                 <FormItem>
-                  <SectionHeader title="模型选择" tip="不同模型效果不同，建议自行测试" />
+                  <SectionHeader title="模型選擇" tip="不同模型效果不同，建議自行測試" />
                   <Button type={'button'} variant={
                     'outline'
-                  } onClick={() => { goModelAdd() }}>请先添加模型</Button>
+                  } onClick={() => { goModelAdd() }}>請先新增模型</Button>
                   <FormMessage />
                 </FormItem>
               )
             }
 
-            {/* 笔记风格 */}
+            {/* 筆記風格 */}
             <FormField
               className="w-full"
               control={form.control}
               name="style"
               render={({ field }) => (
                 <FormItem>
-                  <SectionHeader title="笔记风格" tip="选择生成笔记的呈现风格" />
+                  <SectionHeader title="筆記風格" tip="選擇生成筆記的呈現風格" />
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
@@ -462,8 +462,8 @@ const NoteForm = () => {
               )}
             />
           </div>
-          {/* 视频理解 */}
-          <SectionHeader title="视频理解" tip="将视频截图发给多模态模型辅助分析" />
+          {/* 影片理解 */}
+          <SectionHeader title="影片理解" tip="將影片截圖發給多模態模型輔助分析" />
           <div className="flex flex-col gap-2">
             <FormField
               control={form.control}
@@ -471,7 +471,7 @@ const NoteForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center gap-2">
-                    <FormLabel>启用</FormLabel>
+                    <FormLabel>啟用</FormLabel>
                     <Checkbox
                       checked={videoUnderstandingEnabled}
                       onCheckedChange={v => form.setValue('video_understanding', v)}
@@ -489,7 +489,7 @@ const NoteForm = () => {
                 name="video_interval"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>采样间隔（秒）</FormLabel>
+                    <FormLabel>取樣間隔（秒）</FormLabel>
                     <Input disabled={!videoUnderstandingEnabled} type="number" {...field} />
                     <FormMessage />
                   </FormItem>
@@ -501,7 +501,7 @@ const NoteForm = () => {
                 name="grid_size"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>拼图尺寸（列 × 行）</FormLabel>
+                    <FormLabel>拼圖尺寸（列 × 行）</FormLabel>
                     <div className="flex items-center space-x-2">
                       <Input
                         disabled={!videoUnderstandingEnabled}
@@ -530,20 +530,20 @@ const NoteForm = () => {
               message={
                 <div>
                   <strong>提示：</strong>
-                  <p>视频理解功能必须使用多模态模型。</p>
+                  <p>影片理解功能必須使用多模態模型。</p>
                 </div>
               }
               className="text-sm"
             />
           </div>
 
-          {/* 笔记格式 */}
+          {/* 筆記格式 */}
           <FormField
             control={form.control}
             name="format"
             render={({ field }) => (
               <FormItem>
-                <SectionHeader title="笔记格式" tip="选择要包含的笔记元素" />
+                <SectionHeader title="筆記格式" tip="選擇要包含的筆記元素" />
                 <CheckboxGroup
                   value={field.value}
                   onChange={field.onChange}
@@ -557,14 +557,14 @@ const NoteForm = () => {
             )}
           />
 
-          {/* 备注 */}
+          {/* 備註 */}
           <FormField
             control={form.control}
             name="extras"
             render={({ field }) => (
               <FormItem>
-                <SectionHeader title="备注" tip="可在 Prompt 结尾附加自定义说明" />
-                <Textarea placeholder="笔记需要罗列出 xxx 关键点…" {...field} />
+                <SectionHeader title="備註" tip="可在 Prompt 結尾附加自訂說明" />
+                <Textarea placeholder="筆記需要羅列出 xxx 關鍵點…" {...field} />
                 <FormMessage />
               </FormItem>
             )}

@@ -84,7 +84,7 @@ export function MarkdownHeader({
 
   return (
     <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b bg-white/95 px-4 py-2 backdrop-blur-sm">
-      {/* 左侧区域：版本 + 标签 + 创建时间 */}
+      {/* 左侧区域：版本 + 标签 + 建立時間 */}
       <div className="flex flex-wrap items-center gap-3">
         {isMultiVersion && (
           <Select value={currentVerId} onValueChange={setCurrentVerId}>
@@ -118,7 +118,7 @@ export function MarkdownHeader({
         </Badge>
 
         {createAt && (
-          <div className="text-muted-foreground text-sm">创建时间: {formatDate(createAt)}</div>
+          <div className="text-muted-foreground text-sm">建立時間: {formatDate(createAt)}</div>
         )}
       </div>
 
@@ -136,10 +136,10 @@ export function MarkdownHeader({
                 className="h-8 px-2"
               >
                 <BrainCircuit className="mr-1.5 h-4 w-4" />
-                <span className="text-sm">{viewMode == 'preview' ? '思维导图' : 'markdown'}</span>
+                <span className="text-sm">{viewMode == 'preview' ? '思維導圖' : 'markdown'}</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>思维导图</TooltipContent>
+            <TooltipContent>思維導圖</TooltipContent>
           </Tooltip>
         </TooltipProvider>
         <TooltipProvider>
@@ -147,10 +147,10 @@ export function MarkdownHeader({
             <TooltipTrigger asChild>
               <Button onClick={handleCopy} variant="ghost" size="sm" className="h-8 px-2">
                 <Copy className="mr-1.5 h-4 w-4" />
-                <span className="text-sm">{copied ? '已复制' : '复制'}</span>
+                <span className="text-sm">{copied ? '已複製' : '複製'}</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>复制内容</TooltipContent>
+            <TooltipContent>複製內容</TooltipContent>
           </Tooltip>
         </TooltipProvider>
 
@@ -159,10 +159,10 @@ export function MarkdownHeader({
             <TooltipTrigger asChild>
               <Button onClick={onDownload} variant="ghost" size="sm" className="h-8 px-2">
                 <Download className="mr-1.5 h-4 w-4" />
-                <span className="text-sm">导出 Markdown</span>
+                <span className="text-sm">匯出 Markdown</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>下载为 Markdown 文件</TooltipContent>
+            <TooltipContent>下載為 Markdown 檔案</TooltipContent>
           </Tooltip>
         </TooltipProvider>
         <TooltipProvider>
@@ -177,10 +177,10 @@ export function MarkdownHeader({
                 className="h-8 px-2"
               >
                 {/*<Download className="mr-1.5 h-4 w-4" />*/}
-                <span className="text-sm">原文参照</span>
+                <span className="text-sm">原文參照</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>原文参照</TooltipContent>
+            <TooltipContent>原文參照</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>

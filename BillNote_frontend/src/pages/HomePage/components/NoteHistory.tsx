@@ -53,14 +53,14 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
         <div className="mb-2">
           <input
             type="text"
-            placeholder="搜索笔记标题..."
+            placeholder="搜尋筆記標題..."
             className="w-full rounded border border-neutral-300 px-3 py-1 text-sm outline-none focus:border-primary"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
         <div className="rounded-md border border-neutral-200 bg-neutral-50 py-6 text-center">
-          <p className="text-sm text-neutral-500">暂无记录</p>
+          <p className="text-sm text-neutral-500">暫無紀錄</p>
         </div>
       </>
 
@@ -73,7 +73,7 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
       <div className="mb-2">
         <input
           type="text"
-          placeholder="搜索笔记标题..."
+          placeholder="搜尋筆記標題..."
           className="w-full rounded border border-neutral-300 px-3 py-1 text-sm outline-none focus:border-primary"
           value={search}
           onChange={e => setSearch(e.target.value)}
@@ -154,11 +154,11 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="line-clamp-2 max-w-[180px] flex-1 overflow-hidden text-sm text-ellipsis">
-                        {task.audioMeta.title || '未命名笔记'}
+                        {task.audioMeta.title || '未命名筆記'}
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{task.audioMeta.title || '未命名笔记'}</p>
+                      <p>{task.audioMeta.title || '未命名筆記'}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -179,7 +179,7 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
                   <></>
                 )}
                 {task.status === 'FAILED' && (
-                  <div className={'w-10 rounded bg-red-500 p-0.5 text-center text-white'}>失败</div>
+                  <div className={'w-10 rounded bg-red-500 p-0.5 text-center text-white'}>失敗</div>
                 )}
               </div>
 
@@ -201,7 +201,7 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>删除</p>
+                      <p>刪除</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -211,7 +211,7 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
               {/*  {task.status !== 'SUCCESS' && task.status === 'FAILED' && (*/}
               {/*    <Badge variant="outline">等待中</Badge>*/}
               {/*  )}*/}
-              {/*  {task.status === 'FAILED' && <Badge variant="destructive">失败</Badge>}*/}
+              {/*  {task.status === 'FAILED' && <Badge variant="destructive">失敗</Badge>}*/}
               {/*</div>*/}
             </div>
           </div>
