@@ -53,10 +53,11 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
   const [style, setStyle] = useState<string>('')
   const [createTime, setCreateTime] = useState<string>('')
   // 确保baseURL没有尾部斜杠
-  const baseURL = (String(import.meta.env.VITE_API_BASE_URL || '').replace('/api','') || '').replace(/\/$/, '')
+  const baseURL = (String(import.meta.env.VITE_API_BASE_URL || '').replace('/api', '') || '').replace(/\/$/, '')
   const getCurrentTask = useTaskStore.getState().getCurrentTask
   const currentTask = useTaskStore(state => state.getCurrentTask())
   const taskStatus = currentTask?.status || 'PENDING'
+  const summarizeProgress = taskStatus === 'SUMMARIZING' ? currentTask?.progress : undefined
   const retryTask = useTaskStore.getState().retryTask
   const isMultiVersion = Array.isArray(currentTask?.markdown)
   const [showTranscribe, setShowTranscribe] = useState(false)
@@ -130,16 +131,43 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
       URL.revokeObjectURL(url)
     },
   }
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const task = getCurrentTask()
     const name = task?.audioMeta.title || 'note'
     const blob = new Blob([selectedContent], { type: 'text/markdown;charset=utf-8' })
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = `${name}.md`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+
+    // 檢查瀏覽器是否支持 File System Access API
+    if ('showSaveFilePicker' in window) {
+      try {
+        // 使用現代 API 讓用戶選擇保存位置
+        const handle = await (window as any).showSaveFilePicker({
+          suggestedName: `${name}.md`,
+          types: [{
+            description: 'Markdown Files',
+            accept: { 'text/markdown': ['.md'] },
+          }],
+        })
+        const writable = await handle.createWritable()
+        await writable.write(blob)
+        await writable.close()
+        toast.success('檔案已保存')
+      } catch (err: any) {
+        // 用戶取消操作不顯示錯誤
+        if (err.name !== 'AbortError') {
+          console.error('保存失敗:', err)
+          toast.error('保存失敗，請重試')
+        }
+      }
+    } else {
+      // 降級方案：使用傳統的自動下載
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = `${name}.md`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      toast.success('檔案已下載')
+    }
   }
 
   if (status === 'loading') {
@@ -149,6 +177,11 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
         <Loading className="h-5 w-5" />
         <div className="text-center text-sm">
           <p className="text-lg font-bold">正在生成笔记，请稍候…</p>
+          {summarizeProgress && (
+            <p className="mt-2 text-xs font-medium text-primary">
+              正在摘要：{summarizeProgress.current}/{summarizeProgress.total} 段（{summarizeProgress.percentage}%）
+            </p>
+          )}
           <p className="mt-2 text-xs text-neutral-500">这可能需要几秒钟时间，取决于视频长度</p>
         </div>
       </div>
@@ -207,7 +240,7 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
           <div className={'w-full'}>
             <MarkmapEditor
               value={selectedContent}
-              onChange={() => {}}
+              onChange={() => { }}
               height="100%" // 根据需求可以设定百分比或固定高度
               title={currentTask?.audioMeta?.title || '思维导图'}
             />
@@ -308,7 +341,7 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
                       },
 
                       // Enhanced image with zoom capability
-                      img: ({ node, ...props }) =>{
+                      img: ({ node, ...props }) => {
                         // Fix the URL by removing the 'undefined' prefix if it exists
                         let src = props.src
                         if (src.startsWith('/')) {
@@ -316,17 +349,18 @@ const MarkdownViewer: FC<MarkdownViewerProps> = ({ status }) => {
                         }
                         props.src = src
 
-                     return(
-                      <div className="my-8 flex justify-center">
-                          <Zoom>
-                            <img
-                              {...props}
-                              className="max-w-full cursor-zoom-in rounded-lg object-cover shadow-md transition-all hover:shadow-lg"
-                              style={{ maxHeight: '500px' }}
-                            />
-                          </Zoom>
-                        </div>
-                      )},
+                        return (
+                          <div className="my-8 flex justify-center">
+                            <Zoom>
+                              <img
+                                {...props}
+                                className="max-w-full cursor-zoom-in rounded-lg object-cover shadow-md transition-all hover:shadow-lg"
+                                style={{ maxHeight: '500px' }}
+                              />
+                            </Zoom>
+                          </div>
+                        )
+                      },
 
                       // Better strong/bold text
                       strong: ({ children, ...props }) => (
