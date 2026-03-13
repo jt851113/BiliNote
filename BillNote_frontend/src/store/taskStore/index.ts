@@ -138,7 +138,7 @@ export const useTaskStore = create<TaskStore>()(
             },
             ...state.tasks,
           ],
-          currentTaskId: taskId, // 默认设置为当前任务
+          currentTaskId: taskId, // 默认設定为当前任务
         })),
 
       updateTaskContent: (id, data) =>
@@ -233,7 +233,7 @@ export const useTaskStore = create<TaskStore>()(
           currentTaskId: state.currentTaskId === id ? null : state.currentTaskId,
         }))
 
-        // 调用后端删除接口（如果找到了任务）
+        // 调用后端刪除接口（如果找到了任务）
         if (task) {
           await delete_task({
             video_id: task.audioMeta.video_id,

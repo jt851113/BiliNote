@@ -40,7 +40,7 @@ const SettingLayout = ({ Menu }: ISettingLayoutProps) => {
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <span>返回首页</span>
+                    <span>返回首頁</span>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

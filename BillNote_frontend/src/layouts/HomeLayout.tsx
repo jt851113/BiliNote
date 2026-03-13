@@ -65,7 +65,7 @@ const HomeLayout: FC<IProps> = ({ NoteForm, Preview, History }) => {
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <span>全局配置</span>
+                      <span>全域設定</span>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

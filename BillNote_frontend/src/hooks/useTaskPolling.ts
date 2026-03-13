@@ -30,7 +30,7 @@ export const useTaskPolling = (interval = 3000) => {
           if (status && (status !== task.status || progressChanged)) {
             if (status === 'SUCCESS') {
               const { markdown, transcript, audio_meta } = res.result
-              toast.success('笔记生成成功')
+              toast.success('筆記生成成功')
               updateTaskContent(task.id, {
                 status,
                 progress: undefined,
@@ -40,14 +40,14 @@ export const useTaskPolling = (interval = 3000) => {
               })
             } else if (status === 'FAILED') {
               updateTaskContent(task.id, { status, progress: undefined })
-              console.warn(`⚠️ 任务 ${task.id} 失败`)
+              console.warn(`⚠️ 任务 ${task.id} 失敗`)
             } else {
               updateTaskContent(task.id, { status, progress })
             }
           }
         } catch (e) {
-          console.error('❌ 任务轮询失败：', e)
-          // toast.error(`生成失败 ${e.message || e}`)
+          console.error('❌ 任务轮询失敗：', e)
+          // toast.error(`生成失敗 ${e.message || e}`)
           updateTaskContent(task.id, { status: 'FAILED', progress: undefined })
         }
       }

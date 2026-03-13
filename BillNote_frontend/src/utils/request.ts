@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import toast from 'react-hot-toast'
 
-// 统一响应类型
+// 统一响应類型
 export interface IResponse<T = any> {
   code: number;
   msg: string;
@@ -30,7 +30,7 @@ request.interceptors.response.use(
     } else {
       // 业务错误，统一显示后端返回的错误消息
       // Business error, uniformly display the error message returned from the backend
-      toast.error(res.msg || '操作失败，请稍后再试');
+      toast.error(res.msg || '操作失敗，請稍後再試');
       return Promise.reject(res); // 拒绝Promise，让业务代码可以捕获并处理
     }
   },
@@ -41,15 +41,15 @@ request.interceptors.response.use(
       // 如果后端有返回错误信息，则显示后端信息
       // If the backend returns an error message, display it
 
-      toast.error(res.msg || '服务器错误，请稍后再试');
+      toast.error(res.msg || '伺服器錯誤，請稍後再試');
       return Promise.reject(res);
     } else {
       // 没有响应数据（如网络中断），显示通用网络错误
       // No response data (e.g., network disconnected), display generic network error
-      toast.error( '请求失败，请检查网络连接或稍后再试')
+      toast.error( '請求失敗，請檢查網路連線或稍後再試')
       return Promise.reject({
         code: -1,
-        msg: '请求失败，请检查网络连接',
+        msg: '請求失敗，請檢查網路連線',
         data: null
       } as IResponse);
     }
