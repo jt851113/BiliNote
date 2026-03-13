@@ -5,7 +5,22 @@ import { v4 as uuidv4 } from 'uuid'
 import toast from 'react-hot-toast'
 
 
-export type TaskStatus = 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILD'
+export type TaskStatus =
+  | 'PENDING'
+  | 'PARSING'
+  | 'DOWNLOADING'
+  | 'TRANSCRIBING'
+  | 'SUMMARIZING'
+  | 'FORMATTING'
+  | 'SAVING'
+  | 'SUCCESS'
+  | 'FAILED'
+
+export interface TaskProgress {
+  current: number
+  total: number
+  percentage: number
+}
 
 export interface AudioMeta {
   cover_url: string
@@ -39,9 +54,11 @@ export interface Markdown {
 
 export interface Task {
   id: string
-  markdown: string|Markdown [] //为了兼容之前的笔记
+  platform: string
+  markdown: string | Markdown[] //为了兼容之前的笔记
   transcript: Transcript
   status: TaskStatus
+  progress?: TaskProgress
   audioMeta: AudioMeta
   createdAt: string
   formData: {
@@ -52,19 +69,34 @@ export interface Task {
     quality: string
     model_name: string
     provider_id: string
+    style?: string
+    extras?: string
+    format?: string[]
+    video_understanding?: boolean
+    video_interval?: number
+    grid_size?: [number, number]
   }
 }
 
 interface TaskStore {
   tasks: Task[]
   currentTaskId: string | null
-  addPendingTask: (taskId: string, platform: string) => void
+  addPendingTask: (taskId: string, platform: string, formData: any) => void
   updateTaskContent: (id: string, data: Partial<Omit<Task, 'id' | 'createdAt'>>) => void
   removeTask: (id: string) => void
   clearTasks: () => void
   setCurrentTask: (taskId: string | null) => void
   getCurrentTask: () => Task | null
   retryTask: (id: string) => void
+
+  // 批量操作
+  isBatchMode: boolean
+  selectedTaskIds: string[]
+  toggleBatchMode: () => void
+  toggleTaskSelection: (taskId: string) => void
+  selectAllTasks: () => void
+  clearSelection: () => void
+  getSelectedTasks: () => Task[]
 }
 
 export const useTaskStore = create<TaskStore>()(
@@ -72,6 +104,10 @@ export const useTaskStore = create<TaskStore>()(
     (set, get) => ({
       tasks: [],
       currentTaskId: null,
+
+      // 批量操作狀態
+      isBatchMode: false,
+      selectedTaskIds: [],
 
       addPendingTask: (taskId: string, platform: string, formData: any) =>
 
@@ -106,51 +142,51 @@ export const useTaskStore = create<TaskStore>()(
         })),
 
       updateTaskContent: (id, data) =>
-          set(state => ({
-            tasks: state.tasks.map(task => {
-              if (task.id !== id) return task
+        set(state => ({
+          tasks: state.tasks.map(task => {
+            if (task.id !== id) return task
 
-              if (task.status === 'SUCCESS' && data.status === 'SUCCESS') return task
+            if (task.status === 'SUCCESS' && data.status === 'SUCCESS') return task
 
-              // 如果是 markdown 字符串，封装为版本
-              if (typeof data.markdown === 'string') {
-                const prev = task.markdown
-                const newVersion: Markdown = {
-                  ver_id: `${task.id}-${uuidv4()}`,
-                  content: data.markdown,
-                  style: task.formData.style || '',
-                  model_name: task.formData.model_name || '',
-                  created_at: new Date().toISOString(),
-                }
-
-                let updatedMarkdown: Markdown[]
-                if (Array.isArray(prev)) {
-                  updatedMarkdown = [newVersion, ...prev]
-                } else {
-                  updatedMarkdown = [
-                    newVersion,
-                    ...(typeof prev === 'string' && prev
-                        ? [{
-                          ver_id: `${task.id}-${uuidv4()}`,
-                          content: prev,
-                          style: task.formData.style || '',
-                          model_name: task.formData.model_name || '',
-                          created_at: new Date().toISOString(),
-                        }]
-                        : []),
-                  ]
-                }
-
-                return {
-                  ...task,
-                  ...data,
-                  markdown: updatedMarkdown,
-                }
+            // 如果是 markdown 字符串，封装为版本
+            if (typeof data.markdown === 'string') {
+              const prev = task.markdown
+              const newVersion: Markdown = {
+                ver_id: `${task.id}-${uuidv4()}`,
+                content: data.markdown,
+                style: task.formData.style || '',
+                model_name: task.formData.model_name || '',
+                created_at: new Date().toISOString(),
               }
 
-              return { ...task, ...data }
-            }),
-          })),
+              let updatedMarkdown: Markdown[]
+              if (Array.isArray(prev)) {
+                updatedMarkdown = [newVersion, ...prev]
+              } else {
+                updatedMarkdown = [
+                  newVersion,
+                  ...(typeof prev === 'string' && prev
+                    ? [{
+                      ver_id: `${task.id}-${uuidv4()}`,
+                      content: prev,
+                      style: task.formData.style || '',
+                      model_name: task.formData.model_name || '',
+                      created_at: new Date().toISOString(),
+                    }]
+                    : []),
+                ]
+              }
+
+              return {
+                ...task,
+                ...data,
+                markdown: updatedMarkdown,
+              }
+            }
+
+            return { ...task, ...data }
+          }),
+        })),
 
 
       getCurrentTask: () => {
@@ -159,12 +195,12 @@ export const useTaskStore = create<TaskStore>()(
       },
       retryTask: async (id: string, payload?: any) => {
 
-        if (!id){
+        if (!id) {
           toast.error('任务不存在')
           return
         }
         const task = get().tasks.find(task => task.id === id)
-        console.log('retry',task)
+        console.log('retry', task)
         if (!task) return
 
         const newFormData = payload || task.formData
@@ -175,13 +211,14 @@ export const useTaskStore = create<TaskStore>()(
 
         set(state => ({
           tasks: state.tasks.map(t =>
-              t.id === id
-                  ? {
-                    ...t,
-                    formData: newFormData, // ✅ 显式更新 formData
-                    status: 'PENDING',
-                  }
-                  : t
+            t.id === id
+              ? {
+                ...t,
+                formData: newFormData, // ✅ 显式更新 formData
+                status: 'PENDING',
+                progress: undefined,
+              }
+              : t
           ),
         }))
       },
@@ -208,6 +245,32 @@ export const useTaskStore = create<TaskStore>()(
       clearTasks: () => set({ tasks: [], currentTaskId: null }),
 
       setCurrentTask: taskId => set({ currentTaskId: taskId }),
+
+      // 批量操作方法
+      toggleBatchMode: () => set(state => ({
+        isBatchMode: !state.isBatchMode,
+        selectedTaskIds: [], // 切換時清空選擇
+      })),
+
+      toggleTaskSelection: (taskId: string) => set(state => {
+        const newIds = state.selectedTaskIds.includes(taskId)
+          ? state.selectedTaskIds.filter(id => id !== taskId)
+          : [...state.selectedTaskIds, taskId]
+        return { selectedTaskIds: newIds }
+      }),
+
+      selectAllTasks: () => set(state => ({
+        selectedTaskIds: state.tasks
+          .filter(t => t.status === 'SUCCESS')
+          .map(t => t.id),
+      })),
+
+      clearSelection: () => set({ selectedTaskIds: [] }),
+
+      getSelectedTasks: () => {
+        const { tasks, selectedTaskIds } = get()
+        return tasks.filter(t => selectedTaskIds.includes(t.id))
+      },
     }),
     {
       name: 'task-storage',

@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge.tsx'
 import { cn } from '@/lib/utils.ts'
 import { Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button.tsx'
+import { Checkbox } from '@/components/ui/checkbox.tsx'
 import PinyinMatch from 'pinyin-match'
 import Fuse from 'fuse.js'
 
@@ -14,7 +15,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip.tsx'
 import LazyImage from "@/components/LazyImage.tsx";
-import {FC, useState ,useEffect } from 'react'
+import { FC, useState, useEffect } from 'react'
 
 interface NoteHistoryProps {
   onSelect: (taskId: string) => void
@@ -24,6 +25,9 @@ interface NoteHistoryProps {
 const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
   const tasks = useTaskStore(state => state.tasks)
   const removeTask = useTaskStore(state => state.removeTask)
+  const isBatchMode = useTaskStore(state => state.isBatchMode)
+  const selectedTaskIds = useTaskStore(state => state.selectedTaskIds)
+  const toggleTaskSelection = useTaskStore(state => state.toggleTaskSelection)
   // 确保baseURL没有尾部斜杠
   const baseURL = (String(import.meta.env.VITE_API_BASE_URL || 'api')).replace(/\/$/, '')
   const [rawSearch, setRawSearch] = useState('')
@@ -41,24 +45,24 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
     return () => clearTimeout(timer)
   }, [rawSearch])
   const filteredTasks = search.trim()
-      ? fuse.search(search).map(result => result.item)
-      : tasks
+    ? fuse.search(search).map(result => result.item)
+    : tasks
   if (filteredTasks.length === 0) {
     return (
-        <>
-          <div className="mb-2">
-            <input
-                type="text"
-                placeholder="搜索笔记标题..."
-                className="w-full rounded border border-neutral-300 px-3 py-1 text-sm outline-none focus:border-primary"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="rounded-md border border-neutral-200 bg-neutral-50 py-6 text-center">
-            <p className="text-sm text-neutral-500">暂无记录</p>
-          </div>
-        </>
+      <>
+        <div className="mb-2">
+          <input
+            type="text"
+            placeholder="搜索笔记标题..."
+            className="w-full rounded border border-neutral-300 px-3 py-1 text-sm outline-none focus:border-primary"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="rounded-md border border-neutral-200 bg-neutral-50 py-6 text-center">
+          <p className="text-sm text-neutral-500">暂无记录</p>
+        </div>
+      </>
 
     )
   }
@@ -68,26 +72,60 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
     <>
       <div className="mb-2">
         <input
-            type="text"
-            placeholder="搜索笔记标题..."
-            className="w-full rounded border border-neutral-300 px-3 py-1 text-sm outline-none focus:border-primary"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+          type="text"
+          placeholder="搜索笔记标题..."
+          className="w-full rounded border border-neutral-300 px-3 py-1 text-sm outline-none focus:border-primary"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
         />
       </div>
       <div className="flex flex-col gap-2 overflow-hidden">
         {filteredTasks.map(task => (
           <div
             key={task.id}
-            onClick={() => onSelect(task.id)}
+            onClick={() => {
+              if (isBatchMode) {
+                // 批量模式：只選擇成功的任務
+                if (task.status === 'SUCCESS') {
+                  toggleTaskSelection(task.id)
+                }
+              } else {
+                // 普通模式：切換當前任務
+                onSelect(task.id)
+              }
+            }}
             className={cn(
-              'flex cursor-pointer flex-col rounded-md border border-neutral-200 p-3',
-              selectedId === task.id && 'border-primary bg-primary-light'
+              'flex cursor-pointer flex-col rounded-md border p-3 transition-all',
+              // 批量模式下選中狀態：粗邊框 + 背景色 + 陰影
+              isBatchMode && selectedTaskIds.includes(task.id) && 'border-[3px] border-primary bg-primary/5 shadow-md ring-2 ring-primary/20',
+              // 批量模式下未選中狀態
+              isBatchMode && !selectedTaskIds.includes(task.id) && 'border-neutral-200',
+              // 普通模式下選中狀態
+              !isBatchMode && selectedId === task.id && 'border-primary bg-primary-light',
+              // 普通模式下未選中狀態
+              !isBatchMode && selectedId !== task.id && 'border-neutral-200',
+              // 禁用狀態
+              isBatchMode && task.status !== 'SUCCESS' && 'cursor-not-allowed opacity-50'
             )}
           >
             <div
               className={cn('flex items-center gap-4')}
             >
+              {/* 批量模式的 Checkbox */}
+              {isBatchMode && (
+                <Checkbox
+                  checked={selectedTaskIds.includes(task.id)}
+                  disabled={task.status !== 'SUCCESS'}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (task.status === 'SUCCESS') {
+                      toggleTaskSelection(task.id)
+                    }
+                  }}
+                  className="shrink-0"
+                />
+              )}
+
               {/* 封面图 */}
               {task.platform === 'local' ? (
                 <img
@@ -98,15 +136,15 @@ const NoteHistory: FC<NoteHistoryProps> = ({ onSelect, selectedId }) => {
                   className="h-10 w-12 rounded-md object-cover"
                 />
               ) : (
-                  <LazyImage
+                <LazyImage
 
-                      src={
-                        task.audioMeta.cover_url
-                            ? `${baseURL}/image_proxy?url=${encodeURIComponent(task.audioMeta.cover_url)}`
-                            : '/placeholder.png'
-                      }
-                      alt="封面"
-                  />
+                  src={
+                    task.audioMeta.cover_url
+                      ? `${baseURL}/image_proxy?url=${encodeURIComponent(task.audioMeta.cover_url)}`
+                      : '/placeholder.png'
+                  }
+                  alt="封面"
+                />
               )}
 
               {/* 标题 + 状态 */}
