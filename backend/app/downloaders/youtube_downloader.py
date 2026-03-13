@@ -9,6 +9,7 @@ import yt_dlp
 from app.downloaders.base import Downloader, DownloadQuality
 from app.models.notes_model import AudioDownloadResult
 from app.models.transcriber_model import TranscriptResult, TranscriptSegment
+from app.services.cookie_manager import CookieConfigManager
 from app.utils.path_helper import get_data_dir
 from app.utils.url_parser import extract_video_id
 
@@ -17,8 +18,29 @@ logger = logging.getLogger(__name__)
 
 class YoutubeDownloader(Downloader, ABC):
     def __init__(self):
-
         super().__init__()
+        self.cfm = CookieConfigManager()
+
+    def _apply_cookie_opts(self, ydl_opts: dict):
+        """讀取前端設定的 cookie，轉為 Netscape 格式後注入 ydl_opts"""
+        cookie_str = self.cfm.get("youtube")
+        if not cookie_str:
+            logger.warning("YouTube 下載器：未設定 Cookie，可能會遇到 bot 驗證錯誤")
+            return
+        cookie_file = os.path.join(
+            os.environ.get("DATA_DIR", "data"), "youtube_cookies.txt"
+        )
+        os.makedirs(os.path.dirname(cookie_file), exist_ok=True)
+        with open(cookie_file, "w", encoding="utf-8") as f:
+            f.write("# Netscape HTTP Cookie File\n")
+            for item in cookie_str.split(";"):
+                item = item.strip()
+                if "=" not in item:
+                    continue
+                key, value = item.split("=", 1)
+                f.write(f".youtube.com\tTRUE\t/\tFALSE\t0\t{key.strip()}\t{value.strip()}\n")
+        ydl_opts['cookiefile'] = cookie_file
+        logger.info("YouTube 下載器：使用前端設定的 Cookie")
 
     def download(
         self,
@@ -41,6 +63,7 @@ class YoutubeDownloader(Downloader, ABC):
             'noplaylist': True,
             'quiet': False,
         }
+        self._apply_cookie_opts(ydl_opts)
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=True)
@@ -87,6 +110,7 @@ class YoutubeDownloader(Downloader, ABC):
             'quiet': False,
             'merge_output_format': 'mp4',  # 确保合并成 mp4
         }
+        self._apply_cookie_opts(ydl_opts)
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=True)

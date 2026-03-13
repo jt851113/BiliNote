@@ -15,6 +15,13 @@ class CookieUpdateRequest(BaseModel):
     cookie: str
 
 
+class DownloaderConfigUpdateRequest(BaseModel):
+    platform: str
+    mode: str  # "auto" or "manual"
+    browser: Optional[str] = "chrome"
+    cookie: Optional[str] = ""
+
+
 @router.get("/get_downloader_cookie/{platform}")
 def get_cookie(platform: str):
     cookie = cookie_manager.get(platform)
@@ -31,6 +38,30 @@ def update_cookie(data: CookieUpdateRequest):
     return R.success(
 
     )
+
+
+@router.get("/get_downloader_config/{platform}")
+def get_downloader_config(platform: str):
+    config = cookie_manager.get_config(platform)
+    return R.success(
+        data={
+            "platform": platform,
+            "mode": config.get("mode", "auto"),
+            "browser": config.get("browser", "chrome"),
+            "cookie": config.get("cookie", ""),
+        }
+    )
+
+
+@router.post("/update_downloader_config")
+def update_downloader_config(data: DownloaderConfigUpdateRequest):
+    cookie_manager.set_config(data.platform, {
+        "mode": data.mode,
+        "browser": data.browser or "chrome",
+        "cookie": data.cookie or "",
+    })
+    return R.success()
+
 
 @router.get("/sys_health")
 async def sys_health():
