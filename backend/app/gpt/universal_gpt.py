@@ -1,11 +1,10 @@
 from app.gpt.base import GPT
 from app.gpt.prompt_builder import generate_base_prompt
 from app.models.gpt_model import GPTSource
-from app.gpt.prompt import BASE_PROMPT, AI_SUM, SCREENSHOT, LINK
 from app.gpt.utils import fix_markdown
 from app.models.transcriber_model import TranscriptSegment
-from datetime import timedelta
 from typing import List
+from app.utils.token_utils import format_time
 
 
 class UniversalGPT(GPT):
@@ -17,7 +16,7 @@ class UniversalGPT(GPT):
         self.link = False
 
     def _format_time(self, seconds: float) -> str:
-        return str(timedelta(seconds=int(seconds)))[2:]
+        return format_time(seconds)
 
     def _build_segment_text(self, segments: List[TranscriptSegment]) -> str:
         return "\n".join(
@@ -67,6 +66,10 @@ class UniversalGPT(GPT):
         self.screenshot = source.screenshot
         self.link = source.link
         source.segment = self.ensure_segments_type(source.segment)
+
+        chunked_result = self._try_chunked_summarize(source, self._build_segment_text)
+        if chunked_result is not None:
+            return chunked_result
 
         messages = self.create_messages(
             source.segment,

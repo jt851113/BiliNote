@@ -1,12 +1,10 @@
 from typing import List
 from app.gpt.base import GPT
-from openai import OpenAI
 from app.gpt.prompt import BASE_PROMPT, AI_SUM, SCREENSHOT
 from app.gpt.provider.OpenAI_compatible_provider import OpenAICompatibleProvider
-from app.gpt.utils import fix_markdown
 from app.models.gpt_model import GPTSource
 from app.models.transcriber_model import TranscriptSegment
-from datetime import timedelta
+from app.utils.token_utils import format_time
 
 
 class QwenGPT(GPT):
@@ -16,11 +14,12 @@ class QwenGPT(GPT):
         self.base_url = getenv("QWEN_API_BASE_URL")
         self.model=getenv('QWEN_MODEL')
         print(self.model)
-        self.client = OpenAICompatibleProvider(api_key=self.api_key, base_url=self.base_url)
+        self.client = OpenAICompatibleProvider(api_key=self.api_key, base_url=self.base_url).get_client
+        self.temperature = 0.7
         self.screenshot = False
 
     def _format_time(self, seconds: float) -> str:
-        return str(timedelta(seconds=int(seconds)))[2:]  # e.g., 03:15
+        return format_time(seconds)
 
     def _build_segment_text(self, segments: List[TranscriptSegment]) -> str:
         return "\n".join(
@@ -46,15 +45,20 @@ class QwenGPT(GPT):
         print(content)
         return [{"role": "user", "content": content + AI_SUM}]
     def list_models(self):
-        return self.client.list_models()
+        return self.client.models.list()
     def summarize(self, source: GPTSource) -> str:
         self.screenshot = source.screenshot
         source.segment = self.ensure_segments_type(source.segment)
+
+        chunked_result = self._try_chunked_summarize(source, self._build_segment_text)
+        if chunked_result is not None:
+            return chunked_result
+
         messages = self.create_messages(source.segment, source.title,source.tags)
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            temperature=0.7
+            temperature=self.temperature
         )
         return response.choices[0].message.content.strip()
 

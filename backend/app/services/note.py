@@ -265,7 +265,13 @@ class NoteGenerator:
         logger.info(f"使用下载器：{downloader_cls.__class__}")
         return instance
 
-    def _update_status(self, task_id: Optional[str], status: Union[str, TaskStatus], message: Optional[str] = None):
+    def _update_status(
+        self,
+        task_id: Optional[str],
+        status: Union[str, TaskStatus],
+        message: Optional[str] = None,
+        progress: Optional[dict] = None,
+    ):
         """
         创建或更新 {task_id}.status.json，记录当前任务状态
 
@@ -282,6 +288,8 @@ class NoteGenerator:
         data = {"status": status.value if isinstance(status, TaskStatus) else status}
         if message:
             data["message"] = message
+        if progress is not None:
+            data["progress"] = progress
 
         try:
             # First create a temporary file
@@ -527,8 +535,20 @@ class NoteGenerator:
         :param extras: GPT 额外参数
         :return: 生成的 Markdown 字符串
         """
-        task_id = markdown_cache_file.stem
+        task_id = markdown_cache_file.stem.split("_")[0]
         self._update_status(task_id, TaskStatus.SUMMARIZING)
+
+        def on_chunk_progress(current: int, total: int):
+            percentage = int((current / total) * 100) if total > 0 else 0
+            self._update_status(
+                task_id,
+                TaskStatus.SUMMARIZING,
+                progress={
+                    "current": current,
+                    "total": total,
+                    "percentage": percentage,
+                },
+            )
 
         source = GPTSource(
             title=audio_meta.title,
@@ -540,6 +560,7 @@ class NoteGenerator:
             _format=formats,
             style=style,
             extras=extras,
+            on_chunk_progress=on_chunk_progress,
         )
 
         try:
