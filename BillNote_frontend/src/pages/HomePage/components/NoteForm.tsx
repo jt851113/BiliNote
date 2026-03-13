@@ -7,7 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form.tsx'
-import { useEffect,useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -132,7 +132,7 @@ const NoteForm = () => {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadSuccess, setUploadSuccess] = useState(false)
   /* ---- 全局状态 ---- */
-  const { addPendingTask, currentTaskId, setCurrentTask, getCurrentTask, retryTask } =
+  const { addPendingTask, currentTaskId, setCurrentTask, getCurrentTask, retryTask, isBatchMode, toggleBatchMode } =
     useTaskStore()
   const { loadEnabledModels, modelList, showFeatureHint, setShowFeatureHint } = useModelStore()
 
@@ -204,10 +204,10 @@ const NoteForm = () => {
     setUploadSuccess(false)
 
     try {
-  
-      const  data  = await uploadFile(formData)
-        cb(data.url)
-        setUploadSuccess(true)
+
+      const data = await uploadFile(formData)
+      cb(data.url)
+      setUploadSuccess(true)
     } catch (err) {
       console.error('上传失败:', err)
       // message.error('上传失败，请重试')
@@ -218,6 +218,12 @@ const NoteForm = () => {
 
   const onSubmit = async (values: NoteFormValues) => {
     console.log('Not even go here')
+
+    // 如果處於批量模式，退出批量模式
+    if (isBatchMode) {
+      toggleBatchMode()
+    }
+
     const payload: NoteFormValues = {
       ...values,
       provider_id: modelList.find(m => m.model_name === values.model_name)!.provider_id,
@@ -229,7 +235,7 @@ const NoteForm = () => {
     }
 
     // message.success('已提交任务')
-    const  data  = await generateNote(payload)
+    const data = await generateNote(payload)
     addPendingTask(data.task_id, values.platform, payload)
   }
   const onInvalid = (errors: FieldErrors<NoteFormValues>) => {
@@ -237,6 +243,11 @@ const NoteForm = () => {
     // message.error('请完善所有必填项后再提交')
   }
   const handleCreateNew = () => {
+    // 如果處於批量模式，退出批量模式
+    if (isBatchMode) {
+      toggleBatchMode()
+    }
+
     // 🔁 这里清空当前任务状态
     // 比如调用 resetCurrentTask() 或者 navigate 到一个新页面
     setCurrentTask(null)
@@ -378,46 +389,46 @@ const NoteForm = () => {
             {/* 模型选择 */}
             {
 
-             modelList.length>0?(     <FormField
-               className="w-full"
-               control={form.control}
-               name="model_name"
-               render={({ field }) => (
-                 <FormItem>
-                   <SectionHeader title="模型选择" tip="不同模型效果不同，建议自行测试" />
-                   <Select
-                     onOpenChange={()=>{
-                       loadEnabledModels()
-                     }}
-                     value={field.value}
-                     onValueChange={field.onChange}
-                     defaultValue={field.value}
-                   >
-                     <FormControl>
-                       <SelectTrigger className="w-full min-w-0 truncate">
-                         <SelectValue />
-                       </SelectTrigger>
-                     </FormControl>
-                     <SelectContent>
-                       {modelList.map(m => (
-                         <SelectItem key={m.id} value={m.model_name}>
-                           {m.model_name}
-                         </SelectItem>
-                       ))}
-                     </SelectContent>
-                   </Select>
-                   <FormMessage />
-                 </FormItem>
-               )}
-             />): (
-               <FormItem>
-                 <SectionHeader title="模型选择" tip="不同模型效果不同，建议自行测试" />
+              modelList.length > 0 ? (<FormField
+                className="w-full"
+                control={form.control}
+                name="model_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <SectionHeader title="模型选择" tip="不同模型效果不同，建议自行测试" />
+                    <Select
+                      onOpenChange={() => {
+                        loadEnabledModels()
+                      }}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full min-w-0 truncate">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {modelList.map(m => (
+                          <SelectItem key={m.id} value={m.model_name}>
+                            {m.model_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />) : (
+                <FormItem>
+                  <SectionHeader title="模型选择" tip="不同模型效果不同，建议自行测试" />
                   <Button type={'button'} variant={
                     'outline'
-                  } onClick={()=>{goModelAdd()}}>请先添加模型</Button>
-                 <FormMessage />
-               </FormItem>
-             )
+                  } onClick={() => { goModelAdd() }}>请先添加模型</Button>
+                  <FormMessage />
+                </FormItem>
+              )
             }
 
             {/* 笔记风格 */}
